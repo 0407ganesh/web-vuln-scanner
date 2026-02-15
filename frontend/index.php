@@ -4,35 +4,156 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Vulnerability Scanner - Ganesh & Thejas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background: #f1f5f9; margin: 0; padding: 30px; color: #1e293b; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h1 { color: #0f172a; text-align: center; margin-bottom: 10px; }
-        h2 { color: #0f172a; margin-top: 60px; text-align: center; }
-        .subtitle, .disclaimer { text-align: center; margin-bottom: 30px; }
-        .disclaimer { color: #ef4444; font-weight: bold; }
-        .team { color: #64748b; font-weight: bold; }
-        form { text-align: center; margin: 30px 0; }
-        input[type="url"] { width: 65%; padding: 14px 18px; font-size: 17px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; }
-        input[type="url"]:focus { border-color: #10b981; }
-        button { padding: 14px 50px; font-size: 17px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; margin-left: 15px; transition: 0.2s; }
-        button:hover { background: #059669; }
-        .export-btn { background: #3b82f6; margin: 20px auto; display: block; padding: 12px 40px; font-size: 17px; }
-        .export-btn:hover { background: #2563eb; }
-        .result { margin-top: 50px; padding: 25px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; }
-        pre { background: #0f172a; color: #94a3b8; padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 14px; line-height: 1.5; }
-        .vuln-box { margin: 15px 0; padding: 15px; border-radius: 8px; font-weight: 600; }
-        .high { background: #fee2e2; color: #b91c1c; border-left: 6px solid #ef4444; }
-        .medium { background: #fef3c7; color: #b45309; border-left: 6px solid #f59e0b; }
-        .low { background: #ecfdf5; color: #047857; border-left: 6px solid #10b981; }
-        .success { color: #059669; font-size: 20px; text-align: center; margin: 30px 0; font-weight: bold; }
-        .error { color: #ef4444; text-align: center; font-weight: bold; margin: 20px 0; }
-        table { width:100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
-        th, td { padding:12px; border:1px solid #e2e8f0; text-align: left; }
-        th { background:#0f172a; color:white; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #1e293b; /* Dark text for readability */
+            min-height: 100vh;
+            margin: 0;
+        }
+        .navbar {
+            background: rgba(30, 41, 59, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #c7d2fe !important;
+        }
+        .nav-link {
+            color: #c7d2fe !important;
+            transition: color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #a5b4fc !important;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            padding: 50px;
+            margin-top: 80px; /* Space for fixed navbar */
+        }
+        h1 {
+            color: #4f46e5;
+            font-weight: 800;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #4f46e5;
+            margin-top: 60px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #4b5563;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .disclaimer {
+            color: #ef4444;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .team {
+            color: #4b5563;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .btn-primary {
+            background: #6366f1;
+            border: none;
+            padding: 14px 60px;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+        }
+        .export-btn {
+            background: #3b82f6;
+            padding: 14px 50px;
+            font-size: 18px;
+            color: white;
+        }
+        .export-btn:hover {
+            background: #2563eb;
+        }
+        .result {
+            background: rgba(30, 41, 59, 0.03);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 40px;
+            color: #1e293b;
+        }
+        pre {
+            background: #1e293b;
+            color: #c7d2fe;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.6);
+        }
+        .vuln-box {
+            margin: 15px 0;
+            padding: 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            color: #1e293b;
+        }
+        .high { background: #fee2e2; color: #991b1b; border-left: 8px solid #ef4444; }
+        .medium { background: #fef3c7; color: #92400e; border-left: 8px solid #f59e0b; }
+        .success { color: #10b981; font-size: 22px; font-weight: bold; text-align: center; }
+        .error { color: #ef4444; text-align: center; font-weight: bold; margin: 20px 0; background: rgba(239, 68, 68, 0.15); padding: 15px; border-radius: 8px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #1e293b;
+        }
+        table th {
+            background: #4f46e5 !important;
+            color: white;
+            padding: 12px;
+        }
+        table td {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            color: #1e293b;
+        }
+        table tr:nth-child(even) {
+            background: rgba(99, 102, 241, 0.05);
+        }
     </style>
 </head>
 <body>
+
+<!-- Navigation Bar - Correctly placed at the top -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75 fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.php">VulnScanner</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="index.php">Scan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.php">Dashboard</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <div class="container">
     <h1>Web Application Vulnerability Scanner</h1>
@@ -42,15 +163,17 @@
     <p class="team">Developed by: Ganesh M (U18IW23S0087) & Thejas R (U18IW23S0172)</p>
 
     <form method="POST">
-        <input type="url" name="url" placeholder="https://example.com" required autofocus>
-        <button type="submit" name="scan">Start Scan</button>
+        <div class="input-group mb-3 justify-content-center">
+            <input type="url" name="url" class="form-control" style="max-width: 500px;" placeholder="https://example.com" required autofocus>
+            <button class="btn btn-primary" type="submit" name="scan">Start Scan</button>
+        </div>
     </form>
 
     <?php
     // Database connection
     $db_host = 'localhost';
     $db_user = 'root';
-    $db_pass = ''; // empty for default XAMPP
+    $db_pass = '';
     $db_name = 'vuln_scanner';
 
     $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
@@ -68,9 +191,8 @@
         } else {
             echo '<div class="result"><h2>Results for: ' . htmlspecialchars($url) . '</h2>';
 
-            // Run Python scanner
             $python_path = 'C:/Users/ganes/AppData/Local/Programs/Python/Python313/python.exe';
-            $command = $python_path . ' scanner/scan.py ' . escapeshellarg($url);
+            $command = $python_path . ' ../scanner/scan.py ' . escapeshellarg($url);
             $output = shell_exec($command . ' 2>&1');
 
             if ($output === null || trim($output) === '') {
@@ -86,7 +208,6 @@
                     echo '<h3>Full Scan Details</h3>';
                     echo '<pre>' . json_encode($results, JSON_PRETTY_PRINT) . '</pre>';
 
-                    // Show vulnerabilities
                     if (!empty($results['vulnerabilities'])) {
                         echo '<h3>Detected Vulnerabilities:</h3>';
                         foreach ($results['vulnerabilities'] as $v) {
@@ -100,10 +221,8 @@
                         echo '<p class="success">No vulnerabilities detected – good basic security!</p>';
                     }
 
-                    // SAVE TO DATABASE
                     if ($conn !== null && $results !== null) {
                         try {
-                            // 1. Get or create website
                             $stmt = $conn->prepare("SELECT id FROM websites WHERE url = ?");
                             $stmt->bind_param("s", $url);
                             $stmt->execute();
@@ -122,7 +241,6 @@
                             }
                             $stmt->close();
 
-                            // 2. Save scan record
                             $stmt = $conn->prepare("INSERT INTO scans (website_id, status_code) VALUES (?, ?)");
                             $status = $results['status_code'] ?? 0;
                             $stmt->bind_param("ii", $website_id, $status);
@@ -130,7 +248,6 @@
                             $scan_id = $conn->insert_id;
                             $stmt->close();
 
-                            // 3. Save vulnerabilities
                             if (!empty($results['vulnerabilities'])) {
                                 $stmt = $conn->prepare("INSERT INTO vulnerabilities (scan_id, vuln_type, severity, description) VALUES (?, ?, ?, ?)");
                                 foreach ($results['vulnerabilities'] as $v) {
@@ -156,7 +273,6 @@
     <h2 style="margin-top: 60px; text-align: center; color: #0f172a;">Scan History (Last 10 Scans)</h2>
 
     <?php
-    // Re-open connection for history
     $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
     if ($conn->connect_error) {
@@ -187,17 +303,19 @@
 
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
-                echo '<td>' . htmlspecialchars($row['url']) . '</td>';
-                echo '<td>' . $row['scan_time'] . '</td>';
-                echo '<td>' . $row['status_code'] . '</td>';
-                echo '<td>' . $row['total_vulns'] . '</td>';
-                echo '<td>' . $row['high'] . ' / ' . $row['medium'] . ' / ' . $row['low'] . '</td>';
+                echo '<td style="color:#1e293b;">' . htmlspecialchars($row['url']) . '</td>';
+                echo '<td style="color:#1e293b;">' . $row['scan_time'] . '</td>';
+                echo '<td style="color:#1e293b;">' . $row['status_code'] . '</td>';
+                echo '<td style="color:#1e293b;">' . $row['total_vulns'] . '</td>';
+                echo '<td style="color:#1e293b;">' . $row['high'] . ' / ' . $row['medium'] . ' / ' . $row['low'] . '</td>';
                 echo '</tr>';
             }
             echo '</table>';
         } else {
             echo '<p style="text-align:center; color:#64748b;">No previous scans yet. Scan a few sites to see history!</p>';
         }
+
+        $conn->close();
     }
     ?>
 
@@ -205,16 +323,9 @@
     <h2 style="margin-top: 40px; text-align: center; color: #0f172a;">Export Data for Excel / Power BI</h2>
     <p style="text-align:center; color:#64748b;">Download all scan results as CSV file</p>
 
-    <form action="export_csv.php" method="POST">
-        <button type="submit" name="export_csv" class="export-btn">Download CSV</button>
+    <form action="../backend/export_csv.php" method="POST">
+        <button type="submit" name="export_csv" class="export-btn btn btn-lg">Download CSV</button>
     </form>
-
-    <?php
-    // Close DB connection at the very end
-    if ($conn !== null) {
-        $conn->close();
-    }
-    ?>
 </div>
 
 </body>
